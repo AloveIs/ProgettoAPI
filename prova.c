@@ -4,6 +4,6 @@
 
 #include "prova.h"
 #include<stdio.h>
-int mai(){
+int main(){
     printf("ciao");
 }
