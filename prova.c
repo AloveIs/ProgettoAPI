@@ -2,8 +2,12 @@
 // Created by SysAdmin on 07/05/2019.
 //
 
-#include "prova.h"
 #include<stdio.h>
 int main(){
-    printf("ciao");
+   char temp[256];
+   if(fgets(temp, 100, stdin) == NULL)
+       return 0;
+   else
+       printf("success!!");
+   return 0;
 }
