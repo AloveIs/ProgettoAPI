@@ -8,6 +8,6 @@ int main(){
    if(fgets(temp, 100, stdin) == NULL)
        return 0;
    else
-       printf("success!!");
+       printf("success!!!");
    return 0;
 }
