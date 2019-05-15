@@ -7,6 +7,8 @@
 #define RIGHT(x)2*x+2
 #define PARENT(x)(x-1)/2
 
+int max_min;
+
 typedef struct elemento{
     int valore;
 }elemento;
@@ -26,16 +28,30 @@ void switch_node(elemento *e1, elemento *e2){
 }
 
 void heapify(Heap *heap, int n){
-    int max = n;
-    if(LEFT(n) < heap->size && heap->elem[LEFT(n)].valore > heap->elem[n].valore){
-        max = LEFT(n);
-    }
-    if(RIGHT(n) < heap->size && heap->elem[RIGHT(n)].valore > heap->elem[max].valore){
-        max = RIGHT(n);
-    }
-    if(max != n){
-        switch_node(&(heap->elem[n]),&(heap->elem[max]));
-        heapify(heap,max);
+    if(max_min == 0) {
+        int max = n;
+        if (LEFT(n) < heap->size && heap->elem[LEFT(n)].valore > heap->elem[n].valore) {
+            max = LEFT(n);
+        }
+        if (RIGHT(n) < heap->size && heap->elem[RIGHT(n)].valore > heap->elem[max].valore) {
+            max = RIGHT(n);
+        }
+        if (max != n) {
+            switch_node(&(heap->elem[n]), &(heap->elem[max]));
+            heapify(heap, max);
+        }
+    }else{
+        int min = n;
+        if (LEFT(n) < heap->size && heap->elem[LEFT(n)].valore < heap->elem[n].valore) {
+            min = LEFT(n);
+        }
+        if (RIGHT(n) < heap->size && heap->elem[RIGHT(n)].valore < heap->elem[min].valore) {
+            min = RIGHT(n);
+        }
+        if (min != n) {
+            switch_node(&(heap->elem[n]), &(heap->elem[min]));
+            heapify(heap, min);
+        }
     }
 }
 
@@ -67,11 +83,30 @@ void add_elem (Heap *heap, int el){
     nd.valore = el ;
 
     int i = (heap->size)++ ;
-    while(i && nd.valore > heap->elem[PARENT(i)].valore) {
-        heap->elem[i] = heap->elem[PARENT(i)] ;
-        i = PARENT(i) ;
+    if(max_min == 0) {
+        while (i && nd.valore > heap->elem[PARENT(i)].valore) {
+            heap->elem[i] = heap->elem[PARENT(i)];
+            i = PARENT(i);
+        }
+    }else{
+        while (i && nd.valore < heap->elem[PARENT(i)].valore) {
+            heap->elem[i] = heap->elem[PARENT(i)];
+            i = PARENT(i);
+        }
     }
     heap->elem[i] = nd ;
+}
+
+void delete_elm(Heap *heap){
+    if(heap->size){
+        heap->elem[0] = heap->elem[(heap->size)-1];
+        heap->size = heap->size-1;
+        heap->elem = realloc(heap->elem,heap->size*sizeof(elemento));
+        heapify(heap,0);
+    }else{
+        printf("\nè vuoto");
+        free(heap->elem);
+    }
 }
 
 void print(Heap *heap){
@@ -79,6 +114,11 @@ void print(Heap *heap){
         printf("\nNODO %d FIGLIO DI %d, SINISTRO %d, DESTRO %d",heap->elem[i].valore,PARENT(i),
                 LEFT(i),RIGHT(i));
     }
+}
+
+void delete_heap(Heap *heap){
+    free(heap->elem);
+    free(heap);
 }
 
 
@@ -92,7 +132,9 @@ int main(){
         printf("\nINSERISCI UN NUMERO ");
         scanf("%d",&array[i]);
     }
-    printf("\nCREO IL MAXHEAP...");
+    printf("\ncosa vuoi creare maxheap(0) o minheap(1)?");
+    scanf("%d",&max_min);
+    printf("\nCREO L'HEAP...");
     //init dell'heap
     Heap *heap;
     heap = (Heap *)malloc(sizeof(heap));
@@ -103,9 +145,16 @@ int main(){
     printf("\nradice : %d",heap->elem[0].valore);
     print(heap);
     //add 1 elem
-    add_elem(heap, 20);
+    printf("\nChe elemento vuoi inserire?");
+    int add;
+    scanf("%d",&add);
+    add_elem(heap, add);
     printf("\nradice : %d",heap->elem[0].valore);
     print(heap);
+    printf("\nelimino un elemento");
+    delete_elm(heap);
+    print(heap);
+    delete_heap(heap);
 
 }
 
