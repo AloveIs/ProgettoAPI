@@ -55,6 +55,36 @@ void heapify(Heap *heap, int n){
     }
 }
 
+int min(Heap *heap, int i){
+    if(max_min == 0){ //il minimo si trova fra le foglie
+        if(LEFT(i) >= heap->size) // trovato il minimo vedo se non ha foglie
+            return heap->elem[i].valore;
+        int left = min(heap, LEFT(i));
+        int right = min(heap, RIGHT(i));
+        if(left <= right)
+            return left;
+        else
+            return right;
+    }else{
+        return heap->elem[0].valore; //il minimo di un minheap è la radice
+    }
+}
+
+int max(Heap *heap, int i){
+    if(max_min == 0){
+        //il massimo è la radice
+        return heap->elem[0].valore;
+    }else{
+        if(LEFT(i) >= heap->size)
+            return heap->elem[i].valore;
+        int left = max(heap, LEFT(i));
+        int right = max(heap, RIGHT(i));
+        if(left >= right)
+            return left;
+        else return  right;
+    }
+}
+
 void create(Heap *heap, int *valori, int num){
     int i;
     for( i = 0; i<num; i++){
@@ -97,6 +127,44 @@ void add_elem (Heap *heap, int el){
     heap->elem[i] = nd ;
 }
 
+int extract_max(Heap *heap){
+    int h = max(heap, 0); //tiene conto di quale è il massimo
+    int i= 0;
+    while(i<heap->size && heap->elem[i].valore != h)
+        i++;
+    int res = heap->elem[i].valore;
+    for(int j = i; j<heap->size-1; j++){
+        heap->elem[j].valore = heap->elem[j+1].valore;
+    }
+    heap->size = heap->size-1;
+    heap->elem = realloc(heap->elem,heap->size* sizeof(elemento));
+    for(i = (heap->size -1)/2; i>= 0; i--){
+        heapify(heap,i);
+    }
+    return res;
+
+}
+
+int extract_min(Heap *heap){
+    int h = min(heap, 0);
+    int i = 0;
+    while(i<heap->size && heap->elem[i].valore != h)
+        i++;
+    int res  = heap->elem[i].valore;
+    for(int j = i; j<heap->size-1; j++)
+        heap->elem[j].valore = heap->elem[j+1].valore;
+    heap->size = heap->size-1;
+    heap->elem = realloc(heap->elem, heap->size* sizeof(elemento));
+    for(i = (heap->size -1)/2; i>= 0; i--){
+        heapify(heap,i);
+    }
+    return res;
+}
+
+void delete(Heap *heap, int n){
+    
+}
+
 void delete_elm(Heap *heap){
     if(heap->size){
         heap->elem[0] = heap->elem[(heap->size)-1];
@@ -108,6 +176,7 @@ void delete_elm(Heap *heap){
         free(heap->elem);
     }
 }
+
 
 void print(Heap *heap){
     for(int i = 0; i<heap->size; i++){
@@ -151,8 +220,14 @@ int main(){
     add_elem(heap, add);
     printf("\nradice : %d",heap->elem[0].valore);
     print(heap);
+    printf("\nil minimo %d", min(heap, 0));
+    printf("\nil massimo %d", max(heap,0));
     printf("\nelimino un elemento");
     delete_elm(heap);
+    print(heap);
+    printf("\nmax %d",extract_max(heap));
+    print(heap);
+    printf("\nmin %d",extract_min(heap));
     print(heap);
     delete_heap(heap);
 
