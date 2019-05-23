@@ -161,9 +161,7 @@ int extract_min(Heap *heap){
     return res;
 }
 
-void delete(Heap *heap, int n){
-    
-}
+
 
 void delete_elm(Heap *heap){
     if(heap->size){
