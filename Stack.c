@@ -83,5 +83,4 @@ int main(){
 
     free(stack->array);
     free(stack);
-
 }
